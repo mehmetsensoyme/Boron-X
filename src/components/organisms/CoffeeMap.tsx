@@ -3,11 +3,10 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { CafeWithPrices } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
 
-// Browser-safe icon initialization
 const getIcon = () => {
   if (typeof window === 'undefined') return null;
   return L.icon({
@@ -24,13 +23,25 @@ interface MapProps {
   cafes?: CafeWithPrices[];
 }
 
-const MapController = ({ center }: { center: [number, number] }) => {
-  const map = useMapEvents({});
+const MapHandler = ({ center }: { center: [number, number] }) => {
+  const setMapCenter = useAppStore((state) => state.setMapCenter);
+  const lastFlyToRef = useRef<string>('');
+
+  const map = useMapEvents({
+    moveend: () => {
+      const newCenter = map.getCenter();
+      setMapCenter([newCenter.lat, newCenter.lng]);
+    },
+  });
+
   useEffect(() => {
-    if (center) {
+    const centerKey = `${center[0].toFixed(4)},${center[1].toFixed(4)}`;
+    if (centerKey !== lastFlyToRef.current) {
       map.flyTo(center, map.getZoom(), { duration: 1.5 });
+      lastFlyToRef.current = centerKey;
     }
   }, [center, map]);
+
   return null;
 };
 
@@ -53,10 +64,10 @@ const CoffeeMap = ({ center = [41.0082, 28.9784], zoom = 13, cafes = [] }: MapPr
         className="h-[600px] w-full z-0"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapController center={center} />
+        <MapHandler center={center} />
         
         {cafes.map((cafe) => (
           <Marker 
