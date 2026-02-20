@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
-import { Check, X, ShieldAlert, LogOut, ArrowLeft, Coffee, Clock, User } from 'lucide-react';
+import { Check, X, ShieldAlert, ShieldCheck, LogOut, ArrowLeft, Coffee, Clock, User } from 'lucide-react';
 
 export default function AdminPage() {
   const router = useRouter();

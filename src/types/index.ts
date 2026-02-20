@@ -6,6 +6,7 @@ export interface Cafe {
   address?: string;
   description?: string;
   website?: string;
+  menu_url?: string;
   created_at: string;
 }
 

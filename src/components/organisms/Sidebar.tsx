@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Settings, Globe, Monitor, Coffee, ExternalLink, MapPin, Coins, ChevronLeft, Plus, History, CheckCircle2, LogOut, User as UserIcon } from 'lucide-react';
+import { X, Settings, Globe, Monitor, Coffee, ExternalLink, MapPin, Coins, ChevronLeft, Plus, History, CheckCircle2, LogOut, User as UserIcon, BookOpen } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { currencyService } from '@/services/currencyService';
 import { useState } from 'react';
@@ -123,12 +123,33 @@ const Sidebar = () => {
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
                     <Monitor className="w-3 h-3" /> Görünüm
                   </h3>
-                  <div className="flex items-center justify-between p-5 bg-card rounded-2xl border border-secondary/5">
-                    <span className="text-xs font-bold">Tema Seçimi</span>
-                    <div className="flex bg-muted p-1.5 rounded-xl">
-                      {['light', 'dark', 'system'].map(t => (
-                        <button key={t} onClick={() => setTheme(t as any)} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${theme === t ? 'bg-background shadow-md text-primary' : 'opacity-40 hover:opacity-100'}`}>{t}</button>
-                      ))}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-5 bg-card rounded-2xl border border-secondary/5">
+                      <span className="text-xs font-bold">Tema Seçimi</span>
+                      <div className="flex bg-muted p-1.5 rounded-xl">
+                        {['light', 'dark', 'system'].map(t => (
+                          <button key={t} onClick={() => setTheme(t as any)} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${theme === t ? 'bg-background shadow-md text-primary' : 'opacity-40 hover:opacity-100'}`}>{t}</button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-3 p-5 bg-card rounded-2xl border border-secondary/5">
+                      <span className="text-xs font-bold">Arayüz Ölçeği</span>
+                      <div className="flex bg-muted p-1.5 rounded-xl w-full">
+                        {[
+                          { id: 'compact', label: 'Küçük' },
+                          { id: 'standard', label: 'Standart' },
+                          { id: 'large', label: 'Büyük' }
+                        ].map(s => (
+                          <button 
+                            key={s.id} 
+                            onClick={() => useAppStore.getState().setUIScale(s.id as any)} 
+                            className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${useAppStore.getState().uiScale === s.id ? 'bg-background shadow-md text-primary' : 'opacity-40 hover:opacity-100'}`}
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </section>
@@ -210,9 +231,15 @@ const Sidebar = () => {
                   <a href={selectedCafe.website || '#'} target="_blank" className="flex items-center justify-center gap-2 p-5 bg-card border border-secondary/10 rounded-3xl text-xs font-bold hover:border-primary/30 transition-all">
                     <ExternalLink className="w-4 h-4" /> Web Sitesi
                   </a>
-                  <button onClick={() => setSidebarOpen(true, 'report')} className="flex items-center justify-center gap-2 p-5 bg-primary text-white rounded-3xl text-xs font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all">
-                    <Plus className="w-4 h-4" /> Fiyat Bildir
-                  </button>
+                  {selectedCafe.menu_url ? (
+                    <a href={selectedCafe.menu_url} target="_blank" className="flex items-center justify-center gap-2 p-5 bg-accent text-white rounded-3xl text-xs font-bold shadow-xl shadow-accent/20 hover:scale-[1.02] transition-all">
+                      <BookOpen className="w-4 h-4" /> Dijital Menü
+                    </a>
+                  ) : (
+                    <button onClick={() => setSidebarOpen(true, 'report')} className="flex items-center justify-center gap-2 p-5 bg-primary text-white rounded-3xl text-xs font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all">
+                      <Plus className="w-4 h-4" /> Fiyat Bildir
+                    </button>
+                  )}
                 </div>
                 <section className="space-y-4">
                   <div className="flex items-center justify-between px-2">
